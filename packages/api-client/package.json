@@ -1,0 +1,24 @@
+{
+	"name": "@repo/api-client",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@repo/validators": "workspace:*",
+		"hono": "catalog:"
+	},
+	"peerDependencies": {
+		"@tanstack/react-query": "catalog:"
+	},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@tanstack/react-query": "catalog:",
+		"server": "workspace:*",
+		"typescript": "catalog:"
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"name": "machinery-marketplace",
+	"private": true,
+	"packageManager": "pnpm@11.25.0",
+	"engines": {
+		"node": ">=24"
+	},
+	"scripts": {
+		"dev": "turbo run dev",
+		"build": "turbo run build",
+		"typecheck": "turbo run typecheck",
+		"lint": "turbo run //#check",
+		"check": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"db:generate": "pnpm --filter @repo/db db:generate",
+		"db:migrate": "pnpm --filter @repo/db db:migrate",
+		"db:push": "pnpm --filter @repo/db db:push",
+		"db:studio": "pnpm --filter @repo/db db:studio",
+		"auth:generate": "pnpm --filter server auth:generate"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"turbo": "catalog:",
+		"typescript": "catalog:"
+	}
+}

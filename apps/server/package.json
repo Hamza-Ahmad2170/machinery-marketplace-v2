@@ -1,0 +1,38 @@
+{
+	"name": "server",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./src/app.ts"
+		}
+	},
+	"scripts": {
+		"dev": "dotenv -e .env -- tsx watch --clear-screen=false src/index.ts",
+		"build": "tsdown",
+		"start": "node --env-file-if-exists=.env dist/index.mjs",
+		"typecheck": "tsc --noEmit",
+		"auth:generate": "dotenv -e .env -- auth generate --config src/auth.ts --output ../../packages/db/src/schema/auth.ts --yes"
+	},
+	"dependencies": {
+		"@better-auth/drizzle-adapter": "catalog:",
+		"@hono/node-server": "catalog:",
+		"@hono/zod-validator": "catalog:",
+		"@repo/db": "workspace:*",
+		"@repo/validators": "workspace:*",
+		"@t3-oss/env-core": "catalog:",
+		"better-auth": "catalog:",
+		"drizzle-orm": "catalog:",
+		"hono": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@types/node": "catalog:",
+		"auth": "catalog:",
+		"dotenv-cli": "catalog:",
+		"tsdown": "catalog:",
+		"tsx": "catalog:",
+		"typescript": "catalog:"
+	}
+}

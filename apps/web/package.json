@@ -1,0 +1,33 @@
+{
+	"name": "web",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "next dev --port 3000",
+		"build": "next build",
+		"start": "next start --port 3000",
+		"typecheck": "next typegen && tsc --noEmit"
+	},
+	"dependencies": {
+		"@repo/api-client": "workspace:*",
+		"@repo/ui": "workspace:*",
+		"@repo/validators": "workspace:*",
+		"@t3-oss/env-nextjs": "catalog:",
+		"@tanstack/react-query": "catalog:",
+		"better-auth": "catalog:",
+		"next": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"server-only": "^0.0.1",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@repo/tsconfig": "workspace:*",
+		"@tailwindcss/postcss": "catalog:",
+		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"tailwindcss": "catalog:",
+		"typescript": "catalog:"
+	}
+}
