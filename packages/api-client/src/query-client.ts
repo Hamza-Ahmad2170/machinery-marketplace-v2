@@ -1,12 +1,8 @@
 import { QueryClient } from "@tanstack/react-query";
-import { DetailedError } from "hono/client";
+import { ProblemError } from "./errors";
 
 function isClientError(error: unknown) {
-	return (
-		error instanceof DetailedError &&
-		(error.statusCode ?? 0) >= 400 &&
-		(error.statusCode ?? 0) < 500
-	);
+	return error instanceof ProblemError && error.status >= 400 && error.status < 500;
 }
 
 /** Shared defaults. Each app creates its own instance (per request on the Next server). */

@@ -3,6 +3,7 @@ import { createListingQueries } from "./queries/listings";
 import { createMeQueries } from "./queries/me";
 
 export { type ApiClient, type CreateApiClientOptions, createApiClient } from "./client";
+export { ProblemError, unwrap } from "./errors";
 export { listingKeys } from "./queries/listings";
 export { meKeys } from "./queries/me";
 export { makeQueryClient } from "./query-client";

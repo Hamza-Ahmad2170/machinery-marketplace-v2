@@ -47,6 +47,10 @@ export function Listings() {
 	);
 }
 
+function FieldError({ message }: { message: string | undefined }) {
+	return message ? <p className="text-destructive text-sm">{message}</p> : null;
+}
+
 function CreateListingForm() {
 	const queryClient = useQueryClient();
 	const [formError, setFormError] = useState<string | null>(null);
@@ -83,16 +87,20 @@ function CreateListingForm() {
 					<div className="grid gap-1.5">
 						<Label htmlFor="title">Title</Label>
 						<Input id="title" name="title" required />
+						<FieldError message={create.error?.fieldError("title")} />
 					</div>
 					<div className="grid gap-1.5">
 						<Label htmlFor="description">Description</Label>
 						<Input id="description" name="description" />
+						<FieldError message={create.error?.fieldError("description")} />
 					</div>
 					<div className="grid gap-1.5">
 						<Label htmlFor="price">Price (USD)</Label>
 						<Input id="price" name="price" type="number" min="0" step="0.01" required />
+						<FieldError message={create.error?.fieldError("priceCents")} />
 					</div>
-					{formError || create.error ? (
+					{/* Field-level server errors render above; show the summary for everything else */}
+					{formError || (create.error && !create.error.problem.fieldErrors) ? (
 						<p className="text-destructive text-sm">{formError ?? create.error?.message}</p>
 					) : null}
 					<Button type="submit" disabled={create.isPending}>

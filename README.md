@@ -62,6 +62,24 @@ so cache hashes change with them. `SKIP_ENV_VALIDATION=1` skips validation (CI t
 `src/app.ts`, which exports `AppType`. `@repo/api-client` imports it type-only
 (`import type { AppType } from "server"`), so no server code reaches the browser.
 
+**Errors (RFC 9457).** Every API error is `application/problem+json` with the shape in
+`packages/validators/src/problem.ts`: `{ type, title, status, detail?, instance?, code, fieldErrors? }`.
+On the server:
+
+- Throw `ApiError` (`apps/server/src/lib/errors.ts`), e.g. `throw ApiError.notFound("Listing not found")`.
+  Anything else thrown becomes a 500 with a generic message; the real error is only logged.
+- Validate with `validator("json", schema)` from `src/lib/validator.ts`, not `zValidator` directly.
+  It throws a 422 with `fieldErrors` keyed by dotted path (`"items.0.price"`).
+- Always pass the success status explicitly (`c.json(data, 200)`). Without it Hono types the
+  response as "any status", and it would overlap with the error types.
+- `AppType` wraps the app in `ApplyGlobalResponse`, so every route's RPC types include
+  `ProblemDetails` for each status in `apiErrorStatuses`. Add a status there to use it in `ApiError`.
+
+On clients, query and mutation functions call `unwrap(...)`, which returns the typed success body or
+throws `ProblemError` (also for network failures, `code: "NETWORK_ERROR"`). It is registered as
+TanStack Query's default error type, so `mutation.error?.fieldError("title")` is typed everywhere.
+Better Auth's own `/api/auth/*` endpoints keep Better Auth's error format; use its client for those.
+
 **Data fetching.** `@repo/api-client` shares query keys, `queryOptions` and `mutationOptions`,
 not hooks. Each app calls `useQuery(queries.listings.list())` itself and owns its providers and
 side effects (toasts, navigation, invalidation). The Next app prefetches the same options in

@@ -1,9 +1,11 @@
+import type { ApiErrorStatus, ProblemDetails } from "@repo/validators";
 import { Hono } from "hono";
+import type { ApplyGlobalResponse } from "hono/client";
 import { cors } from "hono/cors";
-import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { auth } from "./auth";
 import { env } from "./env";
+import { handleError, handleNotFound } from "./lib/errors";
 import { listingRoutes } from "./routes/listings";
 import { meRoutes } from "./routes/me";
 import type { AppEnv } from "./types";
@@ -26,16 +28,14 @@ export const app = new Hono<AppEnv>()
 		c.set("session", result?.session ?? null);
 		await next();
 	})
-	.get("/health", (c) => c.json({ ok: true }))
+	.get("/health", (c) => c.json({ ok: true }, 200))
 	.route("/me", meRoutes)
 	.route("/listings", listingRoutes)
-	.onError((err, c) => {
-		if (err instanceof HTTPException) {
-			return c.json({ message: err.message }, err.status);
-		}
-		console.error(err);
-		return c.json({ message: "Internal Server Error" }, 500);
-	});
+	.onError(handleError)
+	.notFound(handleNotFound);
+
+/** Every route can fail with any ApiError status, always as a ProblemDetails body. */
+type ErrorResponses = { [S in ApiErrorStatus]: { json: ProblemDetails } };
 
 /** Imported (type-only) by @repo/api-client for the Hono RPC client. */
-export type AppType = typeof app;
+export type AppType = ApplyGlobalResponse<typeof app, ErrorResponses>;

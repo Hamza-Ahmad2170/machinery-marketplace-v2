@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/drizzle", "!**/next-env.d.ts"]
+		"includes": ["**", "!**/drizzle", "!**/next-env.d.ts", "!**/pnpm-lock.yaml"]
 	},
 	"formatter": {
 		"enabled": true,
