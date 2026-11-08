@@ -1,0 +1,10 @@
+{
+	"$schema": "https://turborepo.dev/schema.json",
+	"extends": ["//"],
+	"tasks": {
+		"build": {
+			"env": ["NEXT_PUBLIC_*"],
+			"outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+		}
+	}
+}

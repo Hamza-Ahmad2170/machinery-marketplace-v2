@@ -1,5 +1,6 @@
 {
 	"name": "@repo/api-client",
+	"version": "0.0.0",
 	"private": true,
 	"type": "module",
 	"exports": {
@@ -13,11 +14,12 @@
 		"hono": "catalog:"
 	},
 	"peerDependencies": {
-		"@tanstack/react-query": "catalog:"
+		"@tanstack/react-query": "^5.0.0"
 	},
 	"devDependencies": {
 		"@repo/tsconfig": "workspace:*",
 		"@tanstack/react-query": "catalog:",
+		"@types/node": "catalog:",
 		"server": "workspace:*",
 		"typescript": "catalog:"
 	}

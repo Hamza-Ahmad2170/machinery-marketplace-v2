@@ -2,11 +2,15 @@ import { z } from "zod";
 
 export const signInInput = z.object({
 	email: z.email(),
-	password: z.string().min(8, "At least 8 characters"),
+	password: z.string().min(1, "Enter your password"),
 });
-export type SignInInput = z.infer<typeof signInInput>;
 
-export const signUpInput = signInInput.extend({
-	name: z.string().trim().min(2, "At least 2 characters").max(80),
+// Matches Better Auth's defaults: passwords are 8 to 128 characters.
+export const signUpInput = z.object({
+	name: z.string().trim().min(1, "Enter your name").max(100),
+	email: z.email(),
+	password: z.string().min(8, "Use at least 8 characters").max(128),
 });
+
+export type SignInInput = z.infer<typeof signInInput>;
 export type SignUpInput = z.infer<typeof signUpInput>;

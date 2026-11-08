@@ -1,17 +1,17 @@
 "use client";
 
-import { makeQueryClient } from "@repo/api-client";
-import { isServer, type QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-
-let browserQueryClient: QueryClient | undefined;
-
-function getQueryClient() {
-	if (isServer) return makeQueryClient();
-	browserQueryClient ??= makeQueryClient();
-	return browserQueryClient;
-}
+import { ThemeProvider } from "@/components/theme-provider";
+import { getQueryClient } from "@/lib/query-client";
 
 export function Providers({ children }: { children: ReactNode }) {
-	return <QueryClientProvider client={getQueryClient()}>{children}</QueryClientProvider>;
+	// Not in useState: React can discard state when the first render suspends without a Suspense boundary.
+	const queryClient = getQueryClient();
+
+	return (
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider>{children}</ThemeProvider>
+		</QueryClientProvider>
+	);
 }

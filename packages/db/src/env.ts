@@ -1,13 +1,12 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
-export function dbEnv() {
-	return createEnv({
+/** Database variables. Apps extend this slice in their own env.ts. */
+export const dbEnv = () =>
+	createEnv({
 		server: {
 			DATABASE_URL: z.url(),
 		},
 		runtimeEnv: process.env,
 		emptyStringAsUndefined: true,
-		skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 	});
-}

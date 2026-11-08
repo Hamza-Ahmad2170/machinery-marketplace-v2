@@ -1,19 +1,19 @@
 {
 	"name": "@repo/db",
+	"version": "0.0.0",
 	"private": true,
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts",
 		"./client": "./src/client.ts",
-		"./schema": "./src/schema/index.ts",
-		"./env": "./src/env.ts"
+		"./env": "./src/env.ts",
+		"./schema": "./src/schema/index.ts"
 	},
 	"scripts": {
-		"typecheck": "tsc --noEmit",
 		"db:generate": "dotenv -e ../../apps/server/.env -- drizzle-kit generate",
 		"db:migrate": "dotenv -e ../../apps/server/.env -- drizzle-kit migrate",
 		"db:push": "dotenv -e ../../apps/server/.env -- drizzle-kit push",
-		"db:studio": "dotenv -e ../../apps/server/.env -- drizzle-kit studio"
+		"db:studio": "dotenv -e ../../apps/server/.env -- drizzle-kit studio",
+		"typecheck": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@t3-oss/env-core": "catalog:",

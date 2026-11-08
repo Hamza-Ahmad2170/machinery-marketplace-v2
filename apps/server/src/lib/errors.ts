@@ -2,6 +2,7 @@ import {
 	type ApiErrorStatus,
 	apiErrorStatuses,
 	type ErrorCode,
+	type FieldErrors,
 	type ProblemDetails,
 } from "@repo/validators";
 import type { Context, ErrorHandler, NotFoundHandler } from "hono";
@@ -29,21 +30,24 @@ const defaultCodes: Record<ApiErrorStatus, ErrorCode> = {
 	500: "INTERNAL_ERROR",
 };
 
-export type FieldErrors = Record<string, string[]>;
-
 export interface ApiErrorOptions {
+	/** Defaults to the status's generic code, e.g. 404 → "NOT_FOUND". */
 	code?: ErrorCode;
-	/** Problem type URI. Defaults to "about:blank" (RFC 9457 §4.2.1). */
-	type?: string;
 	fieldErrors?: FieldErrors;
 	cause?: unknown;
 }
 
-/** Throw from any handler or middleware; `handleError` turns it into an RFC 9457 response. */
+/**
+ * The one error class for the API. Throw it from services, middleware or handlers;
+ * `handleError` turns it into an RFC 9457 problem response.
+ *
+ *   throw ApiError.notFound("Listing not found");
+ *   throw ApiError.forbidden("Only the seller can edit this listing");
+ */
 export class ApiError extends Error {
 	readonly status: ApiErrorStatus;
 	readonly code: ErrorCode;
-	readonly type: string;
+	/** Message safe to show to users. Never put internal details here. */
 	readonly detail?: string;
 	readonly fieldErrors?: FieldErrors;
 
@@ -52,7 +56,6 @@ export class ApiError extends Error {
 		this.name = "ApiError";
 		this.status = status;
 		this.code = options.code ?? defaultCodes[status];
-		this.type = options.type ?? "about:blank";
 		this.detail = detail;
 		this.fieldErrors = options.fieldErrors;
 	}
@@ -72,56 +75,54 @@ export class ApiError extends Error {
 	static conflict(detail?: string, options?: ApiErrorOptions) {
 		return new ApiError(409, detail, options);
 	}
-	static validation(fieldErrors: FieldErrors, detail = "Request validation failed") {
+	static validation(fieldErrors: FieldErrors, detail = "Some fields are invalid") {
 		return new ApiError(422, detail, { fieldErrors });
 	}
 
-	toProblem(instance?: string): ProblemDetails {
+	toProblem(instance: string): ProblemDetails {
 		return {
-			type: this.type,
+			type: "about:blank",
 			title: titles[this.status],
 			status: this.status,
 			code: this.code,
+			instance,
 			...(this.detail !== undefined && { detail: this.detail }),
-			...(instance !== undefined && { instance }),
 			...(this.fieldErrors !== undefined && { fieldErrors: this.fieldErrors }),
 		};
 	}
 }
 
-function problemResponse(c: Context, problem: ProblemDetails & { status: ApiErrorStatus }) {
-	return c.json(problem, problem.status, { "Content-Type": "application/problem+json" });
+/** Error bodies every route can return. Applied to AppType in app.ts with ApplyGlobalResponse. */
+export type ErrorResponses = { [S in ApiErrorStatus]: { json: ProblemDetails } };
+
+function problemResponse(c: Context, error: ApiError) {
+	return c.json(error.toProblem(c.req.path), error.status, {
+		"Content-Type": "application/problem+json",
+	});
 }
 
+/** Maps a status from Hono or third-party middleware onto one the API declares. */
 function toApiStatus(status: number): ApiErrorStatus {
-	return (apiErrorStatuses as readonly number[]).includes(status)
-		? (status as ApiErrorStatus)
-		: status >= 500
-			? 500
-			: 400;
+	if ((apiErrorStatuses as readonly number[]).includes(status)) return status as ApiErrorStatus;
+	return status >= 500 ? 500 : 400;
 }
 
 export const handleError: ErrorHandler = (err, c) => {
-	const instance = c.req.path;
-
 	if (err instanceof ApiError) {
 		if (err.status >= 500) console.error(err);
-		return problemResponse(c, { ...err.toProblem(instance), status: err.status });
+		return problemResponse(c, err);
 	}
 
-	// Thrown by Hono itself or third-party middleware (e.g. body limit, malformed JSON)
+	// Thrown by Hono or its middleware, e.g. malformed JSON in a validated body.
 	if (err instanceof HTTPException) {
-		const error = new ApiError(toApiStatus(err.status), err.message || undefined);
-		return problemResponse(c, { ...error.toProblem(instance), status: error.status });
+		if (err.status >= 500) console.error(err);
+		return problemResponse(c, new ApiError(toApiStatus(err.status), err.message || undefined));
 	}
 
-	// Never leak internal messages to clients
+	// Anything else is a bug. Log it, and never send its message to the client.
 	console.error(err);
-	const error = new ApiError(500, "An unexpected error occurred");
-	return problemResponse(c, { ...error.toProblem(instance), status: error.status });
+	return problemResponse(c, new ApiError(500, "Something went wrong on our side"));
 };
 
-export const handleNotFound: NotFoundHandler = (c) => {
-	const error = ApiError.notFound(`No route for ${c.req.method} ${c.req.path}`);
-	return problemResponse(c, { ...error.toProblem(c.req.path), status: error.status });
-};
+export const handleNotFound: NotFoundHandler = (c) =>
+	problemResponse(c, ApiError.notFound(`No route for ${c.req.method} ${c.req.path}`));

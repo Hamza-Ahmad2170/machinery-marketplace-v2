@@ -2,7 +2,7 @@
   "type": "base",
   "version": "9",
   "dialect": "postgres",
-  "id": "a492d428-f010-4673-9f48-02f5e40161b3",
+  "id": "a82ea1a6-1129-485e-8520-f54abaa8354e",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -86,25 +86,6 @@
       ]
     },
     {
-      "statementType": "create_table",
-      "statementTarget": [
-        "table",
-        "public",
-        "listing"
-      ],
-      "writes": [
-        "s|tbl|public.listing",
-        "n|tbl|public.listing",
-        "e|tbl|public.listing",
-        "n|rel|public.listing",
-        "n|type|public.listing",
-        "n|rel|public.listing_pkey"
-      ],
-      "reads": [
-        "n|sch|public"
-      ]
-    },
-    {
       "statementType": "create_index",
       "statementTarget": [
         "index",
@@ -165,26 +146,6 @@
       ]
     },
     {
-      "statementType": "create_index",
-      "statementTarget": [
-        "index",
-        "public",
-        "listing",
-        "listing_owner_id_idx"
-      ],
-      "writes": [
-        "s|idx|public.listing_owner_id_idx",
-        "n|idx|public.listing_owner_id_idx",
-        "e|idx|public.listing_owner_id_idx",
-        "n|rel|public.listing_owner_id_idx"
-      ],
-      "reads": [
-        "n|tbl|public.listing",
-        "n|sch|public",
-        "n|col|public.listing.owner_id"
-      ]
-    },
-    {
       "statementType": "create_fk",
       "statementTarget": [
         "table",
@@ -229,29 +190,6 @@
         "n|col|public.user.id",
         "e|uniqueness|public.user.id"
       ]
-    },
-    {
-      "statementType": "create_fk",
-      "statementTarget": [
-        "table",
-        "public",
-        "listing"
-      ],
-      "writes": [
-        "s|fk|public.listing.listing_owner_id_user_id_fkey",
-        "n|fk|public.listing.listing_owner_id_user_id_fkey",
-        "e|fk|public.listing.listing_owner_id_user_id_fkey",
-        "n|con|public.listing.listing_owner_id_user_id_fkey"
-      ],
-      "reads": [
-        "n|tbl|public.listing",
-        "n|sch|public",
-        "n|tbl|public.user",
-        "n|sch|public",
-        "n|col|public.listing.owner_id",
-        "n|col|public.user.id",
-        "e|uniqueness|public.user.id"
-      ]
     }
   ],
   "ddl": [
@@ -276,12 +214,6 @@
     {
       "schema": "public",
       "name": "verification",
-      "isRlsEnabled": false,
-      "entityType": "tables"
-    },
-    {
-      "schema": "public",
-      "name": "listing",
       "isRlsEnabled": false,
       "entityType": "tables"
     },
@@ -729,97 +661,6 @@
     },
     {
       "schema": "public",
-      "table": "listing",
-      "name": "id",
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "title",
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "description",
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "price_cents",
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "owner_id",
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "created_at",
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "updated_at",
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "entityType": "columns"
-    },
-    {
-      "schema": "public",
       "table": "account",
       "name": "account_userId_idx",
       "nameExplicit": true,
@@ -883,27 +724,6 @@
     },
     {
       "schema": "public",
-      "table": "listing",
-      "name": "listing_owner_id_idx",
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "owner_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "entityType": "indexes"
-    },
-    {
-      "schema": "public",
       "table": "account",
       "name": "account_user_id_user_id_fkey",
       "nameExplicit": false,
@@ -926,23 +746,6 @@
       "nameExplicit": false,
       "columns": [
         "user_id"
-      ],
-      "schemaTo": "public",
-      "tableTo": "user",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "entityType": "fks"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "listing_owner_id_user_id_fkey",
-      "nameExplicit": false,
-      "columns": [
-        "owner_id"
       ],
       "schemaTo": "public",
       "tableTo": "user",
@@ -987,16 +790,6 @@
       "schema": "public",
       "table": "verification",
       "name": "verification_pkey",
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
-      "schema": "public",
-      "table": "listing",
-      "name": "listing_pkey",
       "columns": [
         "id"
       ],

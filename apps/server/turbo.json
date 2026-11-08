@@ -1,0 +1,17 @@
+{
+	"$schema": "https://turborepo.dev/schema.json",
+	"extends": ["//"],
+	"tasks": {
+		"dev": {
+			"passThroughEnv": [
+				"NODE_ENV",
+				"PORT",
+				"DATABASE_URL",
+				"BETTER_AUTH_SECRET",
+				"BETTER_AUTH_URL",
+				"CORS_ORIGINS",
+				"COOKIE_DOMAIN"
+			]
+		}
+	}
+}

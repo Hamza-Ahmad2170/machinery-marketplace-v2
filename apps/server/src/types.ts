@@ -1,15 +1,17 @@
-import type { Session, User } from "./auth";
+import type { Session, User } from "#lib/auth.js";
 
-export interface AppEnv {
+/** Context for routes that may be called by anyone. */
+export type AppEnv = {
 	Variables: {
 		user: User | null;
-		session: Session["session"] | null;
+		session: Session | null;
 	};
-}
+};
 
-export interface AuthedEnv {
+/** Context for routes that need a signed-in user. */
+export type AuthedEnv = {
 	Variables: {
 		user: User;
-		session: Session["session"];
+		session: Session;
 	};
-}
+};

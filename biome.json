@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!**/drizzle", "!**/next-env.d.ts", "!**/pnpm-lock.yaml"]
+		"includes": ["**", "!**/drizzle", "!**/pnpm-lock.yaml"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -16,26 +16,10 @@
 	},
 	"linter": {
 		"enabled": true,
-		"domains": {
-			"next": "recommended",
-			"react": "recommended"
-		},
 		"rules": {
 			"preset": "recommended"
 		}
 	},
-	"overrides": [
-		{
-			"includes": ["packages/ui/src/components/**"],
-			"linter": {
-				"rules": {
-					"a11y": {
-						"noLabelWithoutControl": "off"
-					}
-				}
-			}
-		}
-	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
@@ -53,5 +37,47 @@
 				"organizeImports": "on"
 			}
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["**", "!apps/server/**", "!packages/db/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["@repo/db", "@repo/db/**"],
+										"message": "Only apps/server may access the database. Call the API instead."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["apps/server/src/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["../*", "../**"],
+										"message": "Import other server folders with # (for example #lib/errors.js). Use ./ only for files in the same folder."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
 }

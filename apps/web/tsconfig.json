@@ -1,15 +1,20 @@
 {
-	"extends": "@repo/tsconfig/nextjs.json",
+	"extends": "@repo/tsconfig/react.json",
 	"compilerOptions": {
+		"allowJs": true,
+		"incremental": true,
+		"plugins": [{ "name": "next" }],
 		"paths": {
-			"~/*": ["./src/*"]
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": [
 		"next-env.d.ts",
-		"src",
-		"next.config.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.mts",
 		".next/types/**/*.ts",
 		".next/dev/types/**/*.ts"
-	]
+	],
+	"exclude": ["node_modules"]
 }

@@ -1,18 +1,11 @@
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { Listings } from "~/components/listings";
-import { SessionBar } from "~/components/session-bar";
-import { getQueryClient, getServerQueries } from "~/lib/api.server";
+import { Button } from "@repo/ui/components/button";
 
-export default async function HomePage() {
-	const queryClient = getQueryClient();
-	await queryClient.prefetchQuery(getServerQueries().listings.list());
-
+export default function HomePage() {
 	return (
-		<main className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-10">
-			<SessionBar />
-			<HydrationBoundary state={dehydrate(queryClient)}>
-				<Listings />
-			</HydrationBoundary>
+		<main className="flex min-h-svh flex-col items-start justify-center gap-4 p-6">
+			<h1 className="font-heading text-2xl font-semibold">Machinery Marketplace</h1>
+			<p className="text-muted-foreground text-sm">The web app is running.</p>
+			<Button>Button</Button>
 		</main>
 	);
 }
